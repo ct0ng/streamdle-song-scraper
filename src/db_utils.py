@@ -5,7 +5,7 @@ from src.config import DATABASE_CONFIG
 
 def insert_artist_data(artist_data):
 
-    print(f'Inserting {len(artist_data)} artist data...')
+    print(f'Inserting data for {len(artist_data)} artists...')
     print('Opening database connection')
 
     conn = psycopg2.connect(
