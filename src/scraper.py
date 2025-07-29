@@ -10,7 +10,7 @@ def scrape_artist_data():
 
     artist_data = []
 
-    print(f'Scraping {SCRAPER_CONFIG['ARTISTS_COUNT']} artist data...')
+    print(f'Scraping data for {SCRAPER_CONFIG['ARTISTS_COUNT']} artists...')
 
     response = requests.get(ARTISTS_URL)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -23,6 +23,18 @@ def scrape_artist_data():
             # print(full_url)
             artist_data.append((name, spotify_id))
 
-    print(f"Successfully scraped {len(artist_data)} artist data entries")
+    print(f"Successfully scraped data for {len(artist_data)} artists")
 
     return artist_data
+
+def scrape_song_data(artist_id):
+    
+    song_data = []
+
+    print(f'Scraping song data...')
+
+    # implement logic
+
+    print(f"Successfully scraped data for {len(song_data)} songs")
+
+    return song_data
