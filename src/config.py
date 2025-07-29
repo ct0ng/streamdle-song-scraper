@@ -12,7 +12,5 @@ DATABASE_CONFIG = {
 }
 
 SCRAPER_CONFIG = {
-    'BASE_URL': "https://kworb.net",
-    'ARTISTS_URL': "https://kworb.net/spotify/artists.html",
-    'ARTISTS_COUNT': 3000,
+    'ARTISTS_COUNT': 100,
 }
