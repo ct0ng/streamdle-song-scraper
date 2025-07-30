@@ -3,19 +3,11 @@ from psycopg2.extras import execute_batch
 
 from src.config import DATABASE_CONFIG
 
-def insert_artist_data(artist_data):
+def upsert_artist_data(artist_data):
 
-    print(f'Inserting data for {len(artist_data)} artists...')
-    print('Opening database connection')
+    print(f'Upserting data for {len(artist_data)} artists...')
 
-    conn = psycopg2.connect(
-        dbname=DATABASE_CONFIG['DBNAME'],
-        user=DATABASE_CONFIG['USER'],
-        password=DATABASE_CONFIG['PASSWORD'],
-        host=DATABASE_CONFIG['HOST'],
-        port=DATABASE_CONFIG['PORT']
-    )
-
+    conn = setup_database()
     cursor = conn.cursor()
 
     upsert_query = """
@@ -32,3 +24,40 @@ def insert_artist_data(artist_data):
     conn.close()
 
     print("Updated artist table data")
+
+def query_artist_data():
+
+    artist_data = []
+
+    print(f'Fetching data for artists...')
+    
+    conn = setup_database()
+    cursor = conn.cursor()
+
+    select_query = """
+        SELECT artist_id, spotify_id FROM public.artist;
+    """
+    cursor.execute(select_query)
+    artist_data = cursor.fetchall()
+
+    print('Closing database connection')
+
+    cursor.close()
+    conn.close()
+
+    print("Fetched artist table data")
+
+    return artist_data
+
+def setup_database():
+    print('Opening database connection')
+
+    conn = psycopg2.connect(
+        dbname=DATABASE_CONFIG['DBNAME'],
+        user=DATABASE_CONFIG['USER'],
+        password=DATABASE_CONFIG['PASSWORD'],
+        host=DATABASE_CONFIG['HOST'],
+        port=DATABASE_CONFIG['PORT']
+    )
+
+    return conn
