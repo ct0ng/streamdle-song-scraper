@@ -1,11 +1,14 @@
+import logging
 import psycopg2
 from psycopg2.extras import execute_batch
 
 from src.config import DATABASE_CONFIG
 
+logger = logging.getLogger(__name__)
+
 def upsert_artist_data(artist_data):
 
-    print(f'Upserting data for {len(artist_data)} artists...')
+    logger.info(f'Upserting data for {len(artist_data)} artists...')
 
     conn = setup_database()
     cursor = conn.cursor()
@@ -18,18 +21,18 @@ def upsert_artist_data(artist_data):
     execute_batch(cursor, upsert_query, artist_data, page_size=100)
     conn.commit()
 
-    print('Closing database connection')
+    logger.info('Closing database connection')
 
     cursor.close()
     conn.close()
 
-    print("Updated artist table data")
+    logger.info("Updated artist table data")
 
 def query_artist_data():
 
     artist_data = []
 
-    print(f'Fetching data for artists...')
+    logger.info(f'Fetching data for artists...')
     
     conn = setup_database()
     cursor = conn.cursor()
@@ -40,17 +43,17 @@ def query_artist_data():
     cursor.execute(select_query)
     artist_data = cursor.fetchall()
 
-    print('Closing database connection')
+    logger.info('Closing database connection')
 
     cursor.close()
     conn.close()
 
-    print("Fetched artist table data")
+    logger.info("Fetched artist table data")
 
     return artist_data
 
 def setup_database():
-    print('Opening database connection')
+    logger.info('Opening database connection')
 
     conn = psycopg2.connect(
         dbname=DATABASE_CONFIG['DBNAME'],

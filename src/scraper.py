@@ -1,3 +1,4 @@
+import logging
 import requests
 from bs4 import BeautifulSoup
 
@@ -8,11 +9,13 @@ ARTISTS_URL = SCRAPER_CONFIG['ARTISTS_URL']
 BASE_URL = SCRAPER_CONFIG['BASE_URL']
 ARTISTS_COUNT = SCRAPER_CONFIG['ARTISTS_COUNT']
 
+logger = logging.getLogger(__name__)
+
 def scrape_artist_data():
 
     artist_data = []
 
-    print(f'Scraping data for {ARTISTS_COUNT} artists...')
+    logger.info(f'Scraping data for {ARTISTS_COUNT} artists...')
 
     response = requests.get(ARTISTS_URL)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -23,7 +26,7 @@ def scrape_artist_data():
             spotify_id = href.split("/")[-1].replace("_songs.html", "")
             artist_data.append((name, spotify_id))
 
-    print(f'Successfully scraped data for {len(artist_data)} artists')
+    logger.info(f'Successfully scraped data for {len(artist_data)} artists')
 
     return artist_data
 
@@ -31,7 +34,7 @@ def scrape_song_data():
     
     song_data = []
 
-    print(f'Scraping song data...')
+    logger.info(f'Scraping song data...')
 
     artist_data = query_artist_data()
     for idx, (artist_id, spotify_id) in enumerate(artist_data):
@@ -55,11 +58,11 @@ def scrape_song_data():
                     else:
                         continue
 
-            print(f'Total songs scraped so far: {len(song_data)}')
+            logger.info(f'Total songs scraped so far: {len(song_data)}')
 
         except Exception as e:
-            print(f"Error scraping {songs_url}: {e}")
+            logger.info(f"Error scraping {songs_url}: {e}")
 
-    print(f'Successfully scraped data for {len(song_data)} songs')
+    logger.info(f'Successfully scraped data for {len(song_data)} songs')
 
     return song_data
