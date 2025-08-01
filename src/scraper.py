@@ -2,10 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from src.db_utils import query_artist_data
-from src.config import SCRAPER_CONFIG
+from src.config import SCRAPER_CONFIG, SONG_RANGES
 
-BASE_URL = 'https://kworb.net/spotify/artist'
-ARTISTS_URL = 'https://kworb.net/spotify/artists.html'
+ARTISTS_URL = SCRAPER_CONFIG['ARTISTS_URL']
+BASE_URL = SCRAPER_CONFIG['BASE_URL']
 ARTISTS_COUNT = SCRAPER_CONFIG['ARTISTS_COUNT']
 
 def scrape_artist_data():
@@ -36,20 +36,14 @@ def scrape_song_data():
     artist_data = query_artist_data()
     for idx, (artist_id, spotify_id) in enumerate(artist_data):
         songs_url = f"{BASE_URL}/{spotify_id}_songs.html"
-        print(songs_url)
         try:
             response = requests.get(songs_url)
             soup = BeautifulSoup(response.text, 'html.parser')
 
             rows = []
-            if idx >= 1000:
-                rows = soup.select("table")[1].select("tr")[1:10]
-            elif idx >= 100:
-                rows = soup.select("table")[1].select("tr")[1:15]
-            else:
-                rows = soup.select("table")[1].select("tr")[1:20]
+            row_limit = next((limit for r, limit in SONG_RANGES.items() if idx in r), 25)
+            rows = soup.select("table")[1].select("tr")[1:row_limit]
             for row in rows:
-                print(row)
                 cols = row.find_all("td")
                 title = cols[0].text.strip()
                 # ignore songs where the artist is a feature
@@ -60,6 +54,8 @@ def scrape_song_data():
                         song_data.append((title, artist_id, stream_count))
                     else:
                         continue
+
+            print(f'Total songs scraped so far: {len(song_data)}')
 
         except Exception as e:
             print(f"Error scraping {songs_url}: {e}")
