@@ -8,6 +8,15 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename='basic.log',encoding='utf-8',level=logging.INFO, filemode = 'w', format='%(process)d-%(levelname)s-%(message)s')
 
 def main():
+    """
+    Main entry point for entire Python script.
+    This function performs the following steps:
+        1. Scrapes artist data
+        2. Cleans and removes duplicate artist data
+        3. Upserts the cleaned artist data into the database
+        4. Scrapes song data
+        5. Upserts the scraped song data in the database
+    """
     artist_data = scrape_artist_data()
     cleaned_artist_data = remove_dupes(artist_data)
     upsert_artist_data(cleaned_artist_data)

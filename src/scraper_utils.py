@@ -3,6 +3,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 def remove_dupes(artist_data):
+    """
+    Removes duplicate artist entries from the list of artist data
+    kwrob's artist data will rarely have artist data entries with the same name. To prevent foreign key constraint errors when upserting data, this function should be called beforehand to sanitize the data
+
+    Args:
+        artist_data (list): The list of artist data tuples, where each tuple contains (name, spotify_id)
+
+    Returns:
+        list: A list of artist entries with duplicates removed
+    """
     seen_artist_names = {}
     cleaned_artist_data = []
 

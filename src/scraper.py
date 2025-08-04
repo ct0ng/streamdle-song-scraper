@@ -12,7 +12,14 @@ ARTISTS_COUNT = SCRAPER_CONFIG['ARTISTS_COUNT']
 logger = logging.getLogger(__name__)
 
 def scrape_artist_data():
+    """
+    Scrapes artist data from the kworb website and returns a list of artist information.
+    Fetches the site's HTML content, parses the page to extract artist names and their corresponding Spotify IDs,
+    and returns a list of tuples containing this info mation for a specified number of artists (ARTISTS_COUNT)
 
+    Returns:
+        list of tuples - (artist_name, spotify_id)
+    """
     artist_data = []
 
     logger.info(f'Scraping data for {ARTISTS_COUNT} artists...')
@@ -31,6 +38,14 @@ def scrape_artist_data():
     return artist_data
 
 def scrape_song_data(): 
+    """
+    Scrapes song data for the list of artists previously scraped and returns a list of song information.
+    Queries the artist table to grab each artists' ID. For each artist, construct a URL that lists each artists' top streamed songs, fetch and parse the HTML to extract song titles and stream counts.
+    The number of songs scraped per artist is determined by the SONG_RANGES mapping, with default equal to 5
+
+    Returns:
+        list of tuple: A list of tuples, each containing (title: str, artist_id: int, stream_count: int).
+    """
     
     song_data = []
 
@@ -44,7 +59,7 @@ def scrape_song_data():
             soup = BeautifulSoup(response.text, 'html.parser')
 
             rows = []
-            row_limit = next((limit for r, limit in SONG_RANGES.items() if idx in r), 25)
+            row_limit = next((limit for r, limit in SONG_RANGES.items() if idx in r), 5)
             rows = soup.select("table")[1].select("tr")[1:row_limit]
             for row in rows:
                 cols = row.find_all("td")
