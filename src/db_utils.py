@@ -52,6 +52,28 @@ def query_artist_data():
 
     return artist_data
 
+def upsert_song_data(song_data):
+
+    logger.info(f'Upserting data for {len(song_data)} songs...')
+
+    conn = setup_database()
+    cursor = conn.cursor()
+
+    upsert_query = """
+        INSERT INTO public.song (title, artist_id, stream_count, created_datetime)
+        VALUES (%s, %s, %s, NOW())
+        ON CONFLICT (title, artist_id) DO UPDATE SET stream_count = EXCLUDED.stream_count, updated_datetime = NOW();
+    """
+    execute_batch(cursor, upsert_query, song_data, page_size=100)
+    conn.commit()
+
+    logger.info('Closing database connection')
+
+    cursor.close()
+    conn.close()
+
+    logger.info("Updated song table data")
+
 def setup_database():
     logger.info('Opening database connection')
 
