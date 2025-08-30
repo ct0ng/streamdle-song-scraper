@@ -1,4 +1,4 @@
-requests
-beautifulsoup4
-python-dotenv
-psycopg2
+beautifulsoup4==4.13.4
+psycopg2==2.9.10
+python-dotenv==1.1.1
+Requests==2.32.5
