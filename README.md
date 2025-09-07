@@ -52,7 +52,8 @@ create table public.song (
   constraint fk_artist foreign KEY (artist_id) references artist (artist_id)
 ) TABLESPACE pg_default;
 ```
-//TODO: add info for function to get random songs
+//TODO: add info for function to get random songs  
+
 2. Clone the repo
 ```sh
   git clone https://github.com/ct0ng/streamdle-song-scraper.git
