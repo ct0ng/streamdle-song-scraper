@@ -46,7 +46,8 @@ create table public.album (
   created_datetime timestamp without time zone not null default now(),
   updated_datetime timestamp without time zone null,
   cover_url character varying(500) null,
-  constraint album_pkey primary key (album_id)
+  constraint album_pkey primary key (album_id),
+  constraint album_title_key unique (title)
 ) TABLESPACE pg_default;
 
 create table public.song (
