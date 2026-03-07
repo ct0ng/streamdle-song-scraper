@@ -7,6 +7,8 @@ from src.config import DATABASE_CONFIG
 logger = logging.getLogger(__name__)
 
 def upsert_artist_data(artist_data):
+    if not artist_data:
+        return
 
     logger.info(f'Upserting data for {len(artist_data)} artists...')
 
@@ -29,7 +31,6 @@ def upsert_artist_data(artist_data):
     logger.info("Updated artist table data")
 
 def query_artist_data():
-
     artist_data = []
 
     logger.info(f'Fetching data for artists...')
@@ -100,6 +101,8 @@ def insert_album_data(album_data):
     return album_id_map
 
 def upsert_song_data(song_data):
+    if not song_data:
+        return
 
     logger.info(f'Upserting data for {len(song_data)} songs...')
 
