@@ -23,6 +23,7 @@ This Python script scrapes popular Spotify artist and song data from [kworb.net]
 ### Prerequisites
 - Python 3.x
 - A PostgreSQL database
+- A Spotify Developer account
 - Dependencies listed in `requirements.txt`
 
 ### Installation
@@ -66,22 +67,38 @@ create table public.song (
 ```
 //TODO: add info for function to get random songs  
 
-2. Clone the repo
+2. Create a Spotify API for album information
+   1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+   2. Log in with your Spotify account
+   3. Click "Create App"
+   4. Fill in the app details:
+      - App name: "Streamdle Song Scraper" (or any name you prefer)
+      - App description: "App to fetch Spotify song album cover data"
+      - Website: Your website (optional)
+      - Redirect URI: `http://localhost:8080` (required but not used for this app)
+   5. Accept the terms and create the app
+   6. Go to your app settings and copy the **Client ID** and **Client Secret** that will be required in Step 5
+3. Clone the repo
 ```sh
   git clone https://github.com/ct0ng/streamdle-song-scraper.git
 ```
-3. Install Python Dependencies
+4. Install Python Dependencies
 ```
   pip install -r requirements.txt
 ```
-4. Add Environment Variables  
+5. Add Environment Variables  
    Create an `.env` file in the root directory of the project that will store your PostgreSQL database credentials. The file should look something like:
 ```
+# PostgreSQL db config
 DB_HOST=your-db-host.supabase.co
 DB_NAME=your_database_name
 DB_PORT=5432
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
+
+# Spotify API Configuration (for album covers)
+SPOTIFY_CLIENT_ID=your_spotify_client_id_here
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret_here
 ```
 
 ## Usage
