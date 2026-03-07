@@ -38,7 +38,7 @@ def query_artist_data():
     cursor = conn.cursor()
 
     select_query = """
-        SELECT artist_id, spotify_id FROM public.artist;
+        SELECT artist_id, spotify_id, name AS artist_name FROM public.artist;
     """
     cursor.execute(select_query)
     artist_data = cursor.fetchall()
