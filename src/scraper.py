@@ -39,9 +39,9 @@ def scrape_artist_data():
 
     return artist_data
 
-def scrape_song_data(): 
+def scrape_song_and_album_data(): 
     """
-    Scrapes song data for the list of artists previously scraped and returns song and album information.
+    Scrapes song and album data for the list of artists previously scraped and returns said data.
     Queries the artist table to grab each artists' ID. For each artist, construct a URL that lists each artists' top streamed songs, fetch and parse the HTML to extract song titles and stream counts.
     The number of songs scraped per artist is determined by the SONG_RANGES mapping, with default equal to 5
 
