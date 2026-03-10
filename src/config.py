@@ -11,11 +11,6 @@ DATABASE_CONFIG = {
     'PASSWORD': os.getenv("DB_PASSWORD"),
 }
 
-SPOTIFY_CONFIG = {
-    'CLIENT_ID': os.getenv("SPOTIFY_CLIENT_ID"),
-    'CLIENT_SECRET': os.getenv("SPOTIFY_CLIENT_SECRET"),
-}
-
 SCRAPER_CONFIG = {
     'ARTISTS_COUNT': 3000,
     'BASE_URL': 'https://kworb.net/spotify/artist',
