@@ -34,7 +34,7 @@ def scrape_artist_data():
             spotify_id = href.split("/")[-1].replace("_songs.html", "")
             artist_data.append((name, spotify_id))
 
-    logger.info(f'Successfully scraped data for {len(artist_data)} artists')
+    logger.info(f'Successfully scraped artist data for {len(artist_data)} artists')
 
     return artist_data
 
@@ -50,10 +50,11 @@ def scrape_song_data():
     
     song_data = []
 
-    logger.info(f'Scraping song data...')
+    logger.info(f'Scraping song data for {ARTISTS_COUNT} artists...')
 
     artist_data = query_artist_data()
     for idx, (artist_id, spotify_id, artist_name) in enumerate(artist_data):
+        logger.info(f'Scraping song data for artist {artist_name}; ({idx + 1} / {len(artist_data)})...')
         songs_url = f"{BASE_URL}/{spotify_id}_songs.html"
         try:
             response = requests.get(songs_url)
@@ -85,6 +86,6 @@ def scrape_song_data():
         except Exception as e:
             logger.info(f"Error scraping {songs_url}: {e}")
 
-    logger.info(f'Successfully scraped data for {len(song_data)} songs')
+    logger.info(f'Successfully scraped song data for {len(song_data)} songs')
     
     return song_data
