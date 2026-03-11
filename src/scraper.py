@@ -45,7 +45,7 @@ def scrape_song_data():
     The number of songs scraped per artist is determined by the SONG_RANGES mapping, with default equal to 5
 
     Returns:
-        List of tuples (title, artist_id, stream_count)
+        List of tuples (song_name, artist_id, stream_count, spotify_track_id)
     """
     
     song_data = []
@@ -66,17 +66,27 @@ def scrape_song_data():
             rows = soup.select("table")[1].select("tr")[1:row_limit]
             for row in rows:
                 cols = row.find_all("td")
-                title = cols[0].text.strip()
+                song_name = cols[0].text.strip()
                 # ignore songs where the artist is a feature
-                if not title.startswith('* '):
+                if not song_name.startswith('* '):
+                    # extract Spotify track ID from the first column
+                    spotify_track_id = None
+                    a_tag = cols[0].find('a')
+                    if a_tag and a_tag.get('href'):
+                        href = a_tag.get('href')
+                        if '/track/' in href:
+                            spotify_track_id = href.split('/track/')[-1].split('?')[0].split('#')[0]
+
+                    # extract stream count from the second column
                     streams_str = cols[1].text.strip().replace(",", "")
                     if streams_str.isdigit():
                         stream_count = int(streams_str)
-                        logger.info(f'Adding song data for {title} by {artist_name}')
+                        logger.info(f'Adding song data for {song_name} by {artist_name}')
                         song_data.append((
-                            title, 
+                            song_name, 
                             artist_id, 
-                            stream_count
+                            stream_count,
+                            spotify_track_id
                         ))
                     else:
                         continue

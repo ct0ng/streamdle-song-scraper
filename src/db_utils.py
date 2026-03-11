@@ -93,10 +93,11 @@ def upsert_song_data(song_data):
     try:
         with PostgresDBConnection() as (conn, cursor):
             upsert_query = """
-                INSERT INTO public.song (title, artist_id, stream_count, created_datetime)
-                VALUES (%s, %s, %s, NOW())
-                ON CONFLICT (title, artist_id) DO UPDATE SET 
+                INSERT INTO public.song (name, artist_id, stream_count, spotify_track_id, created_datetime)
+                VALUES (%s, %s, %s, %s, NOW())
+                ON CONFLICT (name, artist_id) DO UPDATE SET 
                     stream_count = EXCLUDED.stream_count,
+                    spotify_track_id = EXCLUDED.spotify_track_id,
                     updated_datetime = NOW();
             """
             execute_batch(cursor, upsert_query, song_data, page_size=100)
