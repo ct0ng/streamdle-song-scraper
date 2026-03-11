@@ -38,6 +38,40 @@ def scrape_artist_data():
 
     return artist_data
 
+def get_album_cover_url(spotify_track_id):
+    """
+    Fetches the album cover URL for a Spotify track using the oEmbed API.
+
+    Args:
+        spotify_track_id (str): the Spotify track ID
+
+    Returns:
+        str: the thumbnail_url (album cover URL)
+    """
+    if not spotify_track_id:
+        return None
+    
+    try:
+        oembed_url = f"https://open.spotify.com/oembed?url=https://open.spotify.com/track/{spotify_track_id}"
+        response = requests.get(oembed_url)
+        response.raise_for_status()
+
+        data = response.json()
+        thumbnail_url = data.get('thumbnail_url')
+
+        if thumbnail_url:
+            return thumbnail_url
+        else:
+            logger.warning(f'No thumbnail_url found in oEmbed response for track {spotify_track_id}')
+            return None
+
+    except requests.exceptions.RequestException as e:
+        logger.warning(f'Error fetching album cover URL for track {spotify_track_id}: {e}')
+        return None
+    except Exception as e:
+        logger.warning(f'Unexpected error fetching album cover URL for track {spotify_track_id}: {e}')
+        return None
+
 def scrape_song_data(): 
     """
     Scrapes song data for the list of artists previously scraped and returns said data.
@@ -45,7 +79,7 @@ def scrape_song_data():
     The number of songs scraped per artist is determined by the SONG_RANGES mapping, with default equal to 5
 
     Returns:
-        List of tuples (song_name, artist_id, stream_count, spotify_track_id)
+        List of tuples (song_name, artist_id, stream_count, spotify_track_id, album_cover_url)
     """
     
     song_data = []
@@ -81,12 +115,17 @@ def scrape_song_data():
                     streams_str = cols[1].text.strip().replace(",", "")
                     if streams_str.isdigit():
                         stream_count = int(streams_str)
+
+                        # fetch album cover URL using Spotify oEmbed API
+                        album_cover_url = get_album_cover_url(spotify_track_id)
+
                         logger.info(f'Adding song data for {song_name} by {artist_name}')
                         song_data.append((
                             song_name, 
                             artist_id, 
                             stream_count,
-                            spotify_track_id
+                            spotify_track_id,
+                            album_cover_url
                         ))
                     else:
                         continue
