@@ -72,17 +72,20 @@ def get_album_cover_url(spotify_track_id):
         logger.warning(f'Unexpected error fetching album cover URL for track {spotify_track_id}: {e}')
         return None
 
-def scrape_song_data(): 
+def scrape_and_upsert_song_data(): 
     """
-    Scrapes song data for the list of artists previously scraped and returns said data.
+    Scrapes song data for the list of artists previously scraped and upserts to database in batches.
     Queries the artist table to grab each artists' ID. For each artist, construct a URL that lists each artists' top streamed songs, fetch and parse the HTML to extract song titles and stream counts.
-    The number of songs scraped per artist is determined by the SONG_RANGES mapping, with default equal to 5
+    The number of songs scraped per artist is determined by the SONG_RANGES mapping, with default equal to 5.
+    Upserts song data to the database every 100 artists.
 
     Returns:
-        List of tuples (song_name, artist_id, stream_count, spotify_track_id, album_cover_url)
+        None (data is upserted in batches during processing)
     """
+    from src.db_utils import upsert_song_data
     
     song_data = []
+    batch_size = 100
 
     logger.info(f'Scraping song data for {ARTISTS_COUNT} artists...')
 
@@ -135,6 +138,15 @@ def scrape_song_data():
         except Exception as e:
             logger.info(f"Error scraping {songs_url}: {e}")
 
-    logger.info(f'Successfully scraped song data for {len(song_data)} songs')
-    
-    return song_data
+        # upsert song data for every 100 artists
+        if (idx + 1) % batch_size == 0:
+            logger.info(f'Upserting song batch for artists {idx - batch_size + 2} to {idx + 1} ({len(song_data)} songs)...')
+            upsert_song_data(song_data)
+            song_data = []  # Clear the batch after upserting
+
+    # upsert any remaining songs
+    if song_data:
+        logger.info(f'Upserting final song batch ({len(song_data)} songs)...')
+        upsert_song_data(song_data)
+
+    logger.info(f'Successfully scraped and upserted all song data')
